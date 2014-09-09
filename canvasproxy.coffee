@@ -42,10 +42,8 @@ properties = ["imageSmoothingEnabled", "webkitImageSmoothingEnabled",
   "globalCompositeOperation", "globalAlpha", "canvas"]
 
 class CanvasProxy
-  constructor: (@canvas, opts = {}) ->
+  constructor: (@canvas) ->
     @ctx = canvas.getContext '2d'
-    opts.repeat ?= true
-    opts.frameDelay ?= 200
 
     @frames = []
     #@currentFrame = 0
@@ -56,18 +54,17 @@ class CanvasProxy
     @state = {}
 
     for fn in functionNames then do (fn) =>
-      this[fn] = (args...) =>
-        @buffer.push {fn, args}
+      this[fn] = => @buffer.push {fn, args:arguments}
 
     for prop in properties then do (prop) =>
       Object.defineProperty this, prop,
         enumerable: yes
-        get: =>
+        get: ->
           v = @state[prop] if @state
           if v is undefined
             v = @ctx[prop]
           v
-        set: (v) =>
+        set: (v) ->
           @state[prop] = v if @state
           @buffer.push {prop, v}
   
@@ -82,6 +79,7 @@ class CanvasProxy
           @ctx[evt.fn].apply @ctx, evt.args
         else
           @ctx[evt.prop] = evt.v
+      return
 
   play: (delay = 200, repeat = yes) ->
     @state = null # Instead direct get() calls to the context itself.
@@ -102,6 +100,7 @@ class CanvasProxy
           @pos = 0
         else
           @stop()
+      return
     , delay
 
   stop: ->

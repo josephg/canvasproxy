@@ -23,6 +23,10 @@ ctx.fillStyle = 'blue';
 ctx.fillRect(0, 0, 320, 240);
 ctx.commitFrame();
 
+// play(delayMS, repeat);
 ctx.play(300, true);
+
+// ... Later, if you want.
+ctx.stop()
 ```
 
