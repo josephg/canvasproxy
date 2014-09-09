@@ -1,6 +1,6 @@
 
-proxy.min.js: proxy.coffee
+canvasproxy.min.js: canvasproxy.coffee
 	coffee -cp $< | uglifyjs -cm > $@
 
 watch:
-	coffee -bcw proxy.coffee
+	coffee -cw canvasproxy.coffee
