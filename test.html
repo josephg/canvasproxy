@@ -1,0 +1,21 @@
+<script src="proxy.js"></script>
+<canvas></canvas>
+<script>
+
+var canvas = document.getElementsByTagName('canvas')[0];
+
+ctx = canvasProxy(canvas)
+ctx.fillStyle = 'red';
+ctx.fillRect(0, 0, 320, 240);
+ctx.commitFrame();
+ctx.fillStyle = 'green';
+ctx.fillRect(0, 0, 320, 240);
+ctx.commitFrame();
+ctx.fillStyle = 'blue';
+ctx.fillRect(0, 0, 320, 240);
+ctx.commitFrame();
+
+ctx.play({delay:1000, repeat:true})
+
+
+</script>
