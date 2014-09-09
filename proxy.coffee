@@ -76,11 +76,12 @@ class CanvasProxy
     @buffer.length = 0
 
   playFrame: (i) ->
-    for evt in @frames[i]
-      if evt.fn
-        @ctx[evt.fn].apply @ctx, evt.args
-      else
-        @ctx[evt.prop] = evt.v
+    requestAnimationFrame =>
+      for evt in @frames[i]
+        if evt.fn
+          @ctx[evt.fn].apply @ctx, evt.args
+        else
+          @ctx[evt.prop] = evt.v
 
   play: (delay = 200, repeat = yes) ->
     @state = null # Instead direct get() calls to the context itself.
