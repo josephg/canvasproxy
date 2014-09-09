@@ -3,6 +3,8 @@
 <script>
 
 var canvas = document.getElementsByTagName('canvas')[0];
+canvas.width = 320;
+canvas.height = 240;
 
 ctx = canvasProxy(canvas)
 ctx.fillStyle = 'red';
@@ -15,7 +17,7 @@ ctx.fillStyle = 'blue';
 ctx.fillRect(0, 0, 320, 240);
 ctx.commitFrame();
 
-ctx.play({delay:1000, repeat:true})
+ctx.play(300, true);
 
 
 </script>
