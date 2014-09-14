@@ -8,12 +8,15 @@ canvas.height = 240;
 
 ctx = canvasProxy(canvas)
 ctx.fillStyle = 'red';
+console.log(ctx.fillStyle);
 ctx.fillRect(0, 0, 320, 240);
 ctx.commitFrame();
 ctx.fillStyle = 'green';
+console.log(ctx.fillStyle);
 ctx.fillRect(0, 0, 320, 240);
 ctx.commitFrame();
 ctx.fillStyle = 'blue';
+console.log(ctx.fillStyle);
 ctx.fillRect(0, 0, 320, 240);
 ctx.commitFrame();
 

@@ -16,33 +16,8 @@
 # ctx.play frameDelay:200, repeat:1000
 #
 
-
-
-# From chrome:
-# for(k in CanvasRenderingContext2D.prototype) {
-#  if (!CanvasRenderingContext2D.prototype.hasOwnProperty(k)) continue;
-#  methods.push(k);
-#}
-functionNames = ["save", "restore", "scale", "rotate", "translate", "transform",
-  "setTransform", "resetTransform", "createLinearGradient",
-  "createRadialGradient", "setLineDash", "getLineDash", "clearRect",
-  "fillRect", "beginPath", "fill", "stroke", "clip", "isPointInPath",
-  "isPointInStroke", "fillText", "strokeText", "measureText", "strokeRect",
-  "drawImage", "putImageData", "createPattern", "createImageData",
-  "getImageData", "getContextAttributes", "setAlpha", "setCompositeOperation",
-  "setLineWidth", "setLineCap", "setLineJoin", "setMiterLimit", "clearShadow",
-  "setStrokeColor", "setFillColor", "drawImageFromRect", "setShadow",
-  "closePath", "moveTo", "lineTo", "quadraticCurveTo", "bezierCurveTo",
-  "arcTo", "rect", "arc", "ellipse"]
-
-properties = ["imageSmoothingEnabled", "webkitImageSmoothingEnabled",
-  "fillStyle", "strokeStyle", "textBaseline", "textAlign", "font",
-  "lineDashOffset", "shadowColor", "shadowBlur", "shadowOffsetY",
-  "shadowOffsetX", "miterLimit", "lineJoin", "lineCap", "lineWidth",
-  "globalCompositeOperation", "globalAlpha", "canvas"]
-
 class CanvasProxy
-  constructor: (@canvas) ->
+  constructor: (canvas) ->
     @ctx = canvas.getContext '2d'
 
     @frames = []
@@ -53,24 +28,27 @@ class CanvasProxy
     # For reading back - eg ctx.fillStyle = "foo"; console.log(ctx.fillStyle)
     @state = {}
 
-    for fn in functionNames then do (fn) =>
-      this[fn] = => @buffer.push {fn, args:arguments}
-
-    for prop in properties then do (prop) =>
-      Object.defineProperty this, prop,
+    @_addProp(k,v) for k,v of @ctx
+ 
+  _addProp: (k, v) ->
+    if typeof v is 'function'
+      this[k] = => @buffer.push {fn:k, args:arguments}
+    else
+      Object.defineProperty this, k,
         enumerable: yes
         get: ->
-          v = @state[prop] if @state
+          v = @state[k] if @state
           if v is undefined
-            v = @ctx[prop]
+            v = @ctx[k]
           v
         set: (v) ->
-          @state[prop] = v if @state
-          @buffer.push {prop, v}
-  
+          @state[k] = v if @state
+          @buffer.push {prop:k, v}
+    return
+
   commitFrame: ->
-    @frames.push @buffer.slice()
-    @buffer.length = 0
+    @frames.push @buffer
+    @buffer = []
 
   playFrame: (i) ->
     requestAnimationFrame =>
